@@ -83,6 +83,7 @@ def eval_epoch(model,
     Returns:
 
     """
+
     pbar = tqdm.tqdm(enumerate(val_dataloader), total=len(val_dataloader), leave=False)
     pbar.set_description(f"Epoch {epoch}")
     
@@ -114,9 +115,9 @@ def eval_epoch(model,
     return val_loss, torch.cat(y_preds, dim=0), torch.cat(y_true, dim=0)
 
 
-def print_train_val_results(epoch,
-                            train_loss,
-                            val_loss,
+def print_train_val_results(epoch: int,
+                            train_loss: float,
+                            val_loss: float,
                             train_metrics_history,
                             val_metrics_history
                             ):
@@ -188,6 +189,7 @@ def train_val_loop(model,
         model
 
     """
+
     min_loss = np.inf
     cur_patience = 0
     
@@ -234,8 +236,6 @@ def train_val_loop(model,
         
         if lr_scheduler is not None:
             lr_scheduler.step()
-
-
 
     model.load_state_dict(best_model)
     
