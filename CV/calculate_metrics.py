@@ -1,3 +1,6 @@
+"""Include functions to calculate metrics."""
+
+
 import numpy as np
 import scipy as sp
 import pandas as pd
@@ -9,8 +12,7 @@ from logical_functions import logical_and, logical_or, logical_not
 
 
 def calculate_TP(y_preds, y_true):
-    """
-    Calculate True Positive value from predictions and true labels
+    """Calculate True Positive value from predictions and true labels.
 
     Args:
         y_preds (): predictions labels
@@ -19,13 +21,11 @@ def calculate_TP(y_preds, y_true):
     Returns:
         True Positive value
     """
-
     return logical_and(y_true, y_preds).sum().item()
 
 
 def calculate_TN(y_preds, y_true):
-    """
-    Calculate True Negative value from predictions and true labels
+    """Calculate True Negative value from predictions and true labels.
 
     Args:
         y_preds (): predictions labels
@@ -34,13 +34,11 @@ def calculate_TN(y_preds, y_true):
     Returns:
         True Negative value
     """
-
     return logical_and(logical_not(y_true), logical_not(y_preds)).sum().item()
 
 
 def calculate_FP(y_preds, y_true):
-    """
-    Calculate False Positive value from predictions and true labels
+    """Calculate False Positive value from predictions and true labels.
 
     Args:
         y_preds (): predictions labels
@@ -49,13 +47,11 @@ def calculate_FP(y_preds, y_true):
     Returns:
         False Positive value
     """
-
     return y_preds[y_true == 0].sum().item()
 
 
 def calculate_FN(y_preds, y_true):
-    """
-    Calculate False Negative value from predictions and true labels
+    """Calculate False Negative value from predictions and true labels.
 
     Args:
         y_preds (): predictions labels
@@ -64,13 +60,13 @@ def calculate_FN(y_preds, y_true):
     Returns:
         False Negative value
     """
-
     return logical_not(y_preds[y_true == 1]).sum().item()
 
 
 def calculate_TP_TN_FP_FN(y_preds, y_true):
-    """
-    Calculate all standard metrics: True Positive, True Negative, False Positive, False Negative
+    """Calculate all standard metrics: True Positive, True Negative, False
+    Positive, False Negative.
+
     Args:
         y_preds (): predictions labels
         y_true (): true labels
@@ -78,7 +74,6 @@ def calculate_TP_TN_FP_FN(y_preds, y_true):
     Returns:
         True Positive, True Negative, False Positive, False Negative values
     """
-
     TP = calculate_TP(y_preds, y_true)
     TN = calculate_TN(y_preds, y_true)
     FP = calculate_FP(y_preds, y_true)
@@ -86,12 +81,8 @@ def calculate_TP_TN_FP_FN(y_preds, y_true):
     return TP, TN, FP, FN
 
 
-def calculate_accuracy(y_preds,
-                       y_true,
-                       logits=True
-                      ):
-    """
-    Calculate accuracy from predictions and true labels
+def calculate_accuracy(y_preds, y_true, logits=True):
+    """Calculate accuracy from predictions and true labels.
 
     Args:
         y_preds (): predictions labels
@@ -101,7 +92,6 @@ def calculate_accuracy(y_preds,
     Returns:
         Accuracy value
     """
-
     if len(y_preds.size()) == 2:
         y_preds = torch.argmax(y_preds, dim=1)
 
@@ -109,12 +99,8 @@ def calculate_accuracy(y_preds,
     return (TP + TN) / (TP + TN + FP + FN)
 
 
-def calculate_precision(y_preds,
-                        y_true, 
-                        logits=True
-                        ):
-    """
-    Calculate precision from predictions and true labels
+def calculate_precision(y_preds, y_true, logits=True):
+    """Calculate precision from predictions and true labels.
 
     Args:
         y_preds (): predictions labels
@@ -124,7 +110,6 @@ def calculate_precision(y_preds,
     Returns:
         Precision value
     """
-
     if len(y_preds.size()) == 2:
         y_preds = torch.argmax(y_preds, dim=1)
 
@@ -132,12 +117,8 @@ def calculate_precision(y_preds,
     return TP / (TP + FP) if (TP + FP) else 0.0
 
 
-def calculate_recall(y_preds,
-                     y_true, 
-                     logits=True
-                     ):
-    """
-    Calculate recall from predictions and true labels
+def calculate_recall(y_preds, y_true, logits=True):
+    """Calculate recall from predictions and true labels.
 
     Args:
         y_preds (): predictions labels
@@ -147,7 +128,6 @@ def calculate_recall(y_preds,
     Returns:
         Recall value
     """
-
     if len(y_preds.size()) == 2:
         y_preds = torch.argmax(y_preds, dim=1)
 
@@ -155,13 +135,8 @@ def calculate_recall(y_preds,
     return TP / (TP + FN) if (TP + FN) else 0.0
 
 
-def calculate_f1_score(y_preds,
-                       y_true,
-                       logits=True,
-                       threshold=None
-                       ):
-    """
-    Calculate f1_score from predictions and true labels
+def calculate_f1_score(y_preds, y_true, logits=True, threshold=None):
+    """Calculate f1_score from predictions and true labels.
 
     Args:
         y_preds (): predictions labels
@@ -172,7 +147,6 @@ def calculate_f1_score(y_preds,
     Returns:
         F1-score value
     """
-
     precision = calculate_precision(y_preds, y_true)
     recall = calculate_recall(y_preds, y_true)
 
@@ -181,23 +155,22 @@ def calculate_f1_score(y_preds,
     return 0.0
 
 
-def calculate_equal_error_rate(y_preds,
-                               y_true,
-                               logits=True
-                              ):
-    """
+def calculate_equal_error_rate(y_preds, y_true, logits=True):
+    """Calculate Equal Equal Error Rate.
+
     Args:
         y_preds ():
         y_true ():
         logits ():
 
     Returns:
-
+        Equal Error Rate
     """
-
     if logits:
         if len(y_preds.size()) == 2:
-            y_preds = torch.nn.functional.softmax(y_preds, dim=1)[:, 1]  # probability of positive class
+            y_preds = torch.nn.functional.softmax(y_preds, dim=1)[
+                :, 1
+            ]  # probability of positive class
         else:
             y_preds = torch.nn.functional.sigmoid(y_preds)
     else:
@@ -208,11 +181,13 @@ def calculate_equal_error_rate(y_preds,
 
     y_true = y_true.numpy()
     y_preds = y_preds.numpy()
-    
+
     fpr, tpr, thresholds = sklearn.metrics.roc_curve(y_true, y_preds)
 
-    eer = sp.optimize.brentq(lambda x : 1.0 - x - sp.interpolate.interp1d(fpr, tpr)(x), 0.0, 1.0)
-    #thresh = sp.interpolate.interp1d(fpr, thresholds)(eer)
+    eer = sp.optimize.brentq(
+        lambda x: 1.0 - x - sp.interpolate.interp1d(fpr, tpr)(x), 0.0, 1.0
+    )
+    # thresh = sp.interpolate.interp1d(fpr, thresholds)(eer)
     return eer
 
 

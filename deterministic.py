@@ -1,22 +1,28 @@
-def seed_everything(seed):
-    """
+"""Include function to deterministic mode ON."""
 
+
+import os
+import random
+
+import numpy as np
+import scipy as sp
+
+import torch
+
+
+def seed_everything(seed):
+    """Seed everything for deterministic mode.
+
+    Args:
+        seed (int): some number to seed everything
+
+    Returns:
+        None
     """
     random.seed(seed)
-    os.environ['PYTHONHASHSEED'] = str(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     print("Deterministic mode ON!")
-
-
-if __name__ != "__main__":
-    import os
-    import random
-
-
-    import numpy as np
-    import scipy as sp
-
-    import torch
