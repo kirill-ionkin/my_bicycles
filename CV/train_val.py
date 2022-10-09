@@ -1,32 +1,5 @@
-"""Include train/validation loop."""
-
-
-import collections
-
-import numpy as np
-import torch
-import tqdm
-
-
-from calculate_metrics import calculate_accuracy
-
-
 def fit_epoch(model, train_dataloader, criterion, optimizer, epoch, device):
-    """Train model on current epoch.
-
-    Args:
-        model (): Model MUST be already on device
-        train_dataloader ():
-        criterion ():
-        optimizer ():
-        epoch (int): number of current epoch
-        device (): torch.cuda.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    Returns:
-        train_loss (float): mean train loss on current epoch,
-        y_preds: (torch.tensor),
-        y_true:
-    """
+    """"""
     pbar = tqdm.tqdm(
         enumerate(train_dataloader), total=len(train_dataloader), leave=False
     )
@@ -64,20 +37,7 @@ def fit_epoch(model, train_dataloader, criterion, optimizer, epoch, device):
 
 
 def eval_epoch(model, val_dataloader, criterion, epoch, device):
-    """Validate model on current epoch.
-
-    Args:
-        model (): Model MUST be already on device
-        val_dataloader ():
-        criterion ():
-        epoch ():
-        device ():
-
-    Returns:
-        val_loss,
-        y_preds,
-        y_true
-    """
+    """"""
     pbar = tqdm.tqdm(enumerate(val_dataloader), total=len(val_dataloader), leave=False)
     pbar.set_description(f"Epoch {epoch}")
 
@@ -109,43 +69,6 @@ def eval_epoch(model, val_dataloader, criterion, epoch, device):
     return val_loss, torch.cat(y_preds, dim=0), torch.cat(y_true, dim=0)
 
 
-def print_train_val_results(
-    epoch: int,
-    train_loss: float,
-    val_loss: float,
-    train_metrics_history,
-    val_metrics_history,
-):
-    """Print loss and metrics results after each epoch during train/validation
-    model.
-
-    Args:
-        epoch (int): number of current epoch
-        train_loss (float):
-        val_loss (float):
-        train_metrics_history ():
-        val_metrics_history ():
-
-    Returns:
-        None
-    """
-    title = "   EPOCHS    |         TRAIN         |      VALIDATION       "
-    if epoch == 1:
-        print(title)
-        print("-" * len(title))
-
-    print(
-        " Epoch: {0:4} | Loss {1: 16} | Loss {2:16}".format(epoch, train_loss, val_loss)
-    )
-    for key in train_metrics_history:
-        print(
-            "             | {0:16} {1:4} | {2:16} {3:4}".format(
-                key, train_metrics_history[key][-1], key, val_metrics_history[key][-1]
-            )
-        )
-    print("-" * len(title))
-
-
 def train_val_loop(
     model,
     opt,
@@ -159,31 +82,7 @@ def train_val_loop(
     max_epochs=100,
     patience=20,
 ):
-    """Train, validation loop with early-stopping methodology. Saves the best
-    model on validation loss result.
-
-    Args:
-        model (): Model MUST be already on device
-        opt (): Optimizer to optimize loss_func
-        loss_func ():
-        train_dataloader ():
-        val_dataloader ():
-        device (): torch.cuda.device("cuda" if torch.cuda.is_available() else "cpu")
-        metrics (dict["name_of_metric": function_to_calculate_metric]): Dict with ONE or MORE key: value, where
-        key - name of metric, value - function to calculate this metric
-        logits (bool): Depends on model architecture. True, if model return logits or False, if model return probability
-        lr_scheduler (): Learning rate scheduler
-        max_epochs (int): Number of epochs to train, validate model
-        patience (int): Number of epochs to stop train model, when validation loss is increasing - early-stopping
-                        methodology
-
-    Returns:
-        train_loss_history,
-        val_loss_history,
-        train_metrics_history,
-        val_metrics_history,
-        model
-    """
+    """"""
     min_loss = np.inf
     cur_patience = 0
 
@@ -210,10 +109,6 @@ def train_val_loop(
             metric_ = calculate_metric(y_preds, y_true, logits=logits)
             val_metrics_history[metric].append(metric_)
 
-        print_train_val_results(
-            epoch, train_loss, val_loss, train_metrics_history, val_metrics_history
-        )
-
         if val_loss < min_loss:
             min_loss = val_loss
             best_model = model.state_dict()
@@ -221,11 +116,23 @@ def train_val_loop(
         else:
             cur_patience += 1
             if cur_patience == patience:
-                # cur_patience = 0
+                cur_patience = 0
                 break
 
         if lr_scheduler is not None:
             lr_scheduler.step()
+
+        print(
+            "Epoch: {}, Training Loss: {}, Validation Loss: {}".format(
+                epoch, train_loss, val_loss
+            )
+        )
+        print(
+            "---------  Training accuracy: {}, Validation accuracy: {}".format(
+                train_metrics_history["accuracy"][-1],
+                val_metrics_history["accuracy"][-1],
+            )
+        )
 
     model.load_state_dict(best_model)
 
@@ -238,5 +145,13 @@ def train_val_loop(
     )
 
 
-if __name__ == "__main__":
-    pass
+if __name__ != "__main__":
+    import collections
+
+    import numpy as np
+
+    import torch
+
+    import tqdm
+
+    from calculate_metrics import calculate_accuracy
