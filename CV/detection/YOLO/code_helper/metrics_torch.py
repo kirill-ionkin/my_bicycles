@@ -34,9 +34,7 @@ def intersection(ground_truth: torch.Tensor, pred_bbox: torch.Tensor) -> torch.T
 
     width = x2 - x1
     hight = y2 - y1
-    intersection = torch.clamp(width, min=0) * torch.clamp(hight, min=0)
-
-    return intersection
+    return torch.clamp(width, min=0) * torch.clamp(hight, min=0)
 
 
 def union(ground_truth: torch.Tensor, pred_bbox: torch.Tensor) -> torch.Tensor:
@@ -53,13 +51,11 @@ def union(ground_truth: torch.Tensor, pred_bbox: torch.Tensor) -> torch.Tensor:
     pred_bbox_area = (x2_pred - x1_pred) * (y2_pred - y1_pred)
     ground_truth_area = (x2_true - x1_true) * (y2_true - y1_true)
 
-    union = (
+    return (
         pred_bbox_area
         + ground_truth_area
         - intersection(ground_truth=ground_truth, pred_bbox=pred_bbox)
     )
-
-    return union
 
 
 def IoU(
@@ -78,5 +74,4 @@ def IoU(
     union_area = union(ground_truth=ground_truth, pred_bbox=pred_bbox)
     intersection_area = intersection(ground_truth=ground_truth, pred_bbox=pred_bbox)
 
-    intersection_over_union = intersection_area / (union_area + epsilon)
-    return intersection_over_union
+    return intersection_area / (union_area + epsilon)
