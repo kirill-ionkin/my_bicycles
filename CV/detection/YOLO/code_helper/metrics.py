@@ -68,9 +68,7 @@ def intersection(ground_truth: np.ndarray, pred_bbox: np.ndarray) -> np.ndarray:
 
     width = x2 - x1
     hight = y2 - y1
-    intersection = np.where(width > 0, width, 0) * np.where(hight > 0, hight, 0)
-
-    return intersection
+    return np.where(width > 0, width, 0) * np.where(hight > 0, hight, 0)
 
 
 def union(ground_truth: np.ndarray, pred_bbox: np.ndarray) -> np.ndarray:
@@ -87,13 +85,11 @@ def union(ground_truth: np.ndarray, pred_bbox: np.ndarray) -> np.ndarray:
     pred_bbox_area = (x2_pred - x1_pred) * (y2_pred - y1_pred)
     ground_truth_area = (x2_true - x1_true) * (y2_true - y1_true)
 
-    union = (
+    return (
         pred_bbox_area
         + ground_truth_area
         - intersection(ground_truth=ground_truth, pred_bbox=pred_bbox)
     )
-
-    return union
 
 
 def IoU(ground_truth: np.ndarray, pred_bbox: np.ndarray, epsilon=1e-15) -> np.ndarray:
@@ -110,5 +106,4 @@ def IoU(ground_truth: np.ndarray, pred_bbox: np.ndarray, epsilon=1e-15) -> np.nd
     union_area = union(ground_truth=ground_truth, pred_bbox=pred_bbox)
     intersection_area = intersection(ground_truth=ground_truth, pred_bbox=pred_bbox)
 
-    intersection_over_union = intersection_area / (union_area + epsilon)
-    return intersection_over_union
+    return intersection_area / (union_area + epsilon)

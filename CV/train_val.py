@@ -112,7 +112,7 @@ def train_val_loop(
         if val_loss < min_loss:
             min_loss = val_loss
             best_model = model.state_dict()
-            print("Save best model(Epoch: {})".format(epoch))
+            print(f"Save best model(Epoch: {epoch})")
         else:
             cur_patience += 1
             if cur_patience == patience:
@@ -123,15 +123,10 @@ def train_val_loop(
             lr_scheduler.step()
 
         print(
-            "Epoch: {}, Training Loss: {}, Validation Loss: {}".format(
-                epoch, train_loss, val_loss
-            )
+            f"Epoch: {epoch}, Training Loss: {train_loss}, Validation Loss: {val_loss}"
         )
         print(
-            "---------  Training accuracy: {}, Validation accuracy: {}".format(
-                train_metrics_history["accuracy"][-1],
-                val_metrics_history["accuracy"][-1],
-            )
+            f'---------  Training accuracy: {train_metrics_history["accuracy"][-1]}, Validation accuracy: {val_metrics_history["accuracy"][-1]}'
         )
 
     model.load_state_dict(best_model)

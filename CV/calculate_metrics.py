@@ -167,29 +167,20 @@ def calculate_equal_error_rate(y_preds, y_true, logits=True):
         Equal Error Rate
     """
     if logits:
-        if len(y_preds.size()) == 2:
-            y_preds = torch.nn.functional.softmax(y_preds, dim=1)[
-                :, 1
-            ]  # probability of positive class
-        else:
-            y_preds = torch.nn.functional.sigmoid(y_preds)
-    else:
-        if len(y_preds.size()) == 2:
-            y_preds = y_preds[:, 1]  # probability of positive class
-        else:
-            pass
-
+        y_preds = (
+            torch.nn.functional.softmax(y_preds, dim=1)[:, 1]
+            if len(y_preds.size()) == 2
+            else torch.nn.functional.sigmoid(y_preds)
+        )
+    elif len(y_preds.size()) == 2:
+        y_preds = y_preds[:, 1]  # probability of positive class
     y_true = y_true.numpy()
     y_preds = y_preds.numpy()
 
     fpr, tpr, thresholds = sklearn.metrics.roc_curve(y_true, y_preds)
 
-    eer = sp.optimize.brentq(
+    return sp.optimize.brentq(
         lambda x: 1.0 - x - sp.interpolate.interp1d(fpr, tpr)(x), 0.0, 1.0
     )
-    # thresh = sp.interpolate.interp1d(fpr, thresholds)(eer)
-    return eer
 
 
-if __name__ == "__main__":
-    pass
